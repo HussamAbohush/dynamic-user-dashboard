@@ -1,0 +1,49 @@
+<ng-container
+  *ngIf="{
+    loading: loading$ | async,
+    error: error$ | async,
+    users: users$ | async,
+    pagination: pagination$ | async
+  } as state"
+>
+  @if(state.loading){
+  <mat-spinner class="w-40 mx-auto mb-3" />
+  } @else if (state.error) {
+  <h4 class="text-red-600 mb-3">{{ state.error }}</h4>
+  }@else {
+  <div
+    class="mb-3 max-w-5xl mx-auto flex justify-center items-center flex-wrap"
+  >
+    @for( user of state.users;track user.id) {
+    <div class="mx-3 w-[300px] mb-3">
+      <a [routerLink]="[user.id]">
+      <mat-card color="primary" >
+        <mat-card-header>
+          <mat-card-title-group>
+            <img mat-card-sm-image class="mx-1 mb-3" style="border-radius: 50%" [src]="user.avatar" />
+            <mat-card-title >
+              {{ user.first_name }} {{ user.last_name }}
+            </mat-card-title>
+            <mat-card-subtitle>ID: {{ user.id }}</mat-card-subtitle>
+          </mat-card-title-group>
+        </mat-card-header>
+      </mat-card>
+    </a>
+    </div>
+    }
+  </div>
+  }
+  <mat-paginator
+    #paginator
+    *ngIf="state.pagination"
+    (page)="handlePageEvent($event)"
+    [length]="state.pagination.totalUsers"
+    [pageSize]="state.pagination.totalUsersPerPage"
+    [disabled]="state.loading"
+    [showFirstLastButtons]="false"
+    hidePageSize
+    [pageIndex]="state.pagination.page - 1"
+    aria-label="Select page"
+  >
+  </mat-paginator>
+</ng-container>
